@@ -35,4 +35,39 @@
 (cua-mode t)
 (setq cua-enable-cua-keys nil)
 
+;; http://www.emacsblog.org/2007/02/27/quick-tip-add-occur-to-isearch/
+(define-key isearch-mode-map (kbd "C-o")
+  (lambda ()
+    (interactive)
+    (let ((case-fold-search isearch-case-fold-search))
+      (occur (if isearch-regexp isearch-string
+	       (regexp-quote isearch-string))))))
+
+;;http://steve.yegge.googlepages.com/effective-emacs
+(defalias 'qrr 'query-replace-regexp)
+(defalias 'rb 'revert-buffer)
+(defalias 'rs 'replace-string)
+
+;; from http://exceedhl.wordpress.com/2006/07/13/tweak-emacs/
+(defun tweakemacs-duplicate-one-line ()
+  "Duplicate the current line. There is a little bug: when current line is the last line of the buffer, this will not work as expected. Anyway, that's ok for me."
+  (interactive)
+  (let ((start (progn (beginning-of-line) (point)))
+	(end (progn (next-line 1) (beginning-of-line) (point))))
+    (insert-buffer-substring (current-buffer) start end)
+    (forward-line -1)))
+(global-set-key (kbd "C-=") 'tweakemacs-duplicate-one-line)
+
+;; http://juangarcia.890m.com/blog/2008/06/04/emacs-keymaps-prefix-keys/
+(defvar my-insert-map nil)
+(setq my-insert-map (make-sparse-keymap))
+
+(global-set-key "\C-ci" my-insert-map)
+(global-set-key "\C-cid" 'my-insert-date)
+(global-set-key (kbd "C-x g") 'magit-status)
+
+(defun my-insert-date ()
+  (interactive)
+  (insert (format-time-string "%Y%m%d")))
+
 (provide 'my-generic)
